@@ -69,5 +69,18 @@ namespace DbTest
             Assert.Equal(ServiceEnum.Power, c.ServiceType);
             Assert.Equal(TestRepo.CZ4_0, cs.ConductorSize?.Value);
         }
+
+        [Fact, Order(5)]
+        public void AddRoute()
+        {
+            _dbFixture.Repo.AddRoute();
+            var rt = _dbFixture.Repo.GetRoute();
+            Assert.NotNull(rt);
+            Assert.True(rt?.Path.Count() > 0);
+
+            var cbl = _dbFixture.Repo.GetCableWithRoute(rt?.Cable?.Name!);
+            Assert.NotNull(cbl);
+            Assert.True(cbl?.Route?.Path.Count() > 0);
+        }
     }
 }

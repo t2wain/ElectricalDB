@@ -15,6 +15,6 @@ namespace ElectricalEntityLib.Entity
         public Raceway? Raceway { get; set; }
         public string? FillCategory { get; set; }
         public string? NecRule { get; set; }
-        public double PercentFill { get; set; }
+        public double? PercentFill { get; set; }
     }
 }

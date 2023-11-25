@@ -83,8 +83,6 @@ namespace ElectricalEntityLib
             };
 
             _dbCtx.AddRange(cslib);
-            _dbCtx.SaveChanges();
-
 
             // group cable specs into libraries
             var cspecs = new List<CableSpec>
@@ -296,10 +294,6 @@ namespace ElectricalEntityLib
 
         public void AddCables()
         {
-            //var lstCables = this.GetCables();
-            //if (lstCables.Count() > 0)
-            //    return;
-
             var nodes = _dbCtx.Nodes.ToDictionary(n => n.Name);
             var ss = _dbCtx.SegSystems.Where(ss => ss.Name == "LV").First();
             var cspec = _dbCtx.CableSpecs
@@ -362,6 +356,39 @@ namespace ElectricalEntityLib
             _dbCtx.SaveChanges();
         }
 
+        public void AddRoute()
+        {
+            var cbl = _dbCtx.Cables.Where(c => c.Name == "CABLE1").First();
+            var rw = _dbCtx.Raceways.ToDictionary(r => r.Name);
+            var nodes = _dbCtx.Nodes.ToDictionary(n => n.Name);
+            var ss = _dbCtx.SegSystems.ToDictionary(s => s.Name);
+            var rs = new RouteSpec { Name = cbl.Name, FromNode = nodes["E1"], ToNode = nodes["E2"], SegSystem = ss["LV"] };
+            var rt = new Route
+            {
+                Cable = cbl,
+                RouteSpec = rs,
+                DateCreated = DateTime.Now,
+                Path = new List<RoutePath> 
+                { 
+                    new() { Raceway = rw["D1"], Sequence = 1 },
+                    new() { Raceway = rw["R1"], Sequence = 2 },
+                    new() { Raceway = rw["R2"], Sequence = 3 },
+                    new() { Raceway = rw["R3A"], Sequence = 4 },
+                    new() { Raceway = rw["R4"], Sequence = 5 },
+                    new() { Raceway = rw["R6A"], Sequence = 6 },
+                    new() { Raceway = rw["D2"], Sequence = 7 },
+                }
+            };
+
+            cbl.Route = rt;
+            cbl.RouteSpec = rs;
+
+            _dbCtx.CableFills.AddRange(
+                rt.Path.Select(p => new CableFill { Cable = cbl, Raceway = p.Raceway }).ToList());
+
+            _dbCtx.SaveChanges();
+        }
+
         #endregion
 
         #region Queries
@@ -393,6 +420,20 @@ namespace ElectricalEntityLib
                 .Include(r => r.TraySpec)
                 .Include(r => r.SegSystems!).ThenInclude(ss => ss.SegSystem)
                 .ToList();
+
+        public Route? GetRoute() =>
+            _dbCtx.Routes.Include(rt => rt.Cable).Include(rt => rt.Path)
+            .Join(_dbCtx.Cables, rt => rt.Id, cbl => cbl.RouteId, (rt, cbl) => rt)
+            .FirstOrDefault();
+
+        public Cable? GetCableWithRoute(string cableName) =>
+            _dbCtx.Cables
+                .Include(cbl => cbl.Route)
+                .ThenInclude(rt => rt!.Path)
+                .ThenInclude(p => p.Raceway)
+                .Where(cbl => cbl.Name == "CABLE1")
+                .FirstOrDefault();
+            
 
         #endregion
     }
