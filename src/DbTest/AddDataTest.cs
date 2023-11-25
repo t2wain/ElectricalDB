@@ -1,43 +1,73 @@
-using ElectricalDbSqliteLib;
 using ElectricalEntityLib;
 using ElectricalEntityLib.Entity;
+using Xunit.Extensions.Ordering;
 
 namespace DbTest
 {
-    public class AddDataTest
+    [Order(1)]
+    public class AddDataTest : IClassFixture<DatabaseFixture>
     {
-        TestRepo _repo;
+        DatabaseFixture _dbFixture;
 
-        public AddDataTest()
+        public AddDataTest(DatabaseFixture dbFixture)
         {
-            _repo = new TestRepo(ElectricalDbContext.MemoryDbContext);
-            _repo.AddConductorSizes();
-            _repo.AddSegSystems();
-            _repo.AddTraySpecs();
-            _repo.AddCableSpecs();
-
-            _repo.AddNodes();
-            _repo.AddCables();
-            _repo.AddRaceways();
+            _dbFixture = dbFixture;
         }
 
-        [Fact]
+        [Fact, Order(2)]
+        public void AddConductorSize()
+        {
+            _dbFixture.Repo.AddConductorSizes();
+            var sizes = _dbFixture.Repo.GetConductorSizes();
+            Assert.True(sizes?.Children?.Count() > 0);
+        }
+
+        [Fact, Order(2)]
+        public void AddSegSystems()
+        {
+            _dbFixture.Repo.AddSegSystems();
+            Assert.True(_dbFixture.DbContext.SegSystems.Count() > 0);
+        }
+
+        [Fact, Order(2)]
+        public void AddTraySpecs()
+        {
+            _dbFixture.Repo.AddTraySpecs();
+            Assert.True(_dbFixture.DbContext.TraySpecs.Count() > 0);
+        }
+
+        [Fact, Order(2)]
+        public void AddNodes()
+        {
+            _dbFixture.Repo.AddNodes();
+            Assert.True(_dbFixture.DbContext.Nodes.Count() > 0);
+        }
+
+        [Fact, Order(3)]
+        public void AddCableSpecs()
+        {
+            _dbFixture.Repo.AddCableSpecs();
+            Assert.True(_dbFixture.DbContext.CableSpecs.Count() > 0);
+        }
+
+        [Fact, Order(3)]
+        public void AddRaceways()
+        {
+            _dbFixture.Repo.AddRaceways();
+            Assert.True(_dbFixture.DbContext.Raceways.Count() > 0);
+        }
+
+        [Fact, Order(4)]
         public void AddCable()
         {
-            var cables = _repo.GetCables();
+            _dbFixture.Repo.AddCables();
+            var cables = _dbFixture.Repo.GetCables();
             var c = cables.First();
             var cs = c.CableSpec!;
             Assert.Equal(2, cables.Count());
             Assert.Equal(TestRepo.CZ4_0, cs.Name);
             Assert.Equal(ServiceEnum.Power, c.ServiceType);
             Assert.Equal(TestRepo.CZ4_0, cs.ConductorSize?.Value);
-        }
-
-        [Fact]
-        public void AddConductorSize()
-        {
-            var sizes = _repo.GetConductorSizes();
-            Assert.True(sizes?.Children?.Count() > 0);
         }
     }
 }

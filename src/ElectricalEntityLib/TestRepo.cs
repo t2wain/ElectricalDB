@@ -23,9 +23,9 @@ namespace ElectricalEntityLib
 
         public void AddConductorSizes()
         {
-            var cs = this.GetConductorSizes();
-            if (cs != null)
-                return;
+            //var cs = this.GetConductorSizes();
+            //if (cs != null)
+            //    return;
 
             string[] NecConductorSizes = new string[]
             {
@@ -296,9 +296,9 @@ namespace ElectricalEntityLib
 
         public void AddCables()
         {
-            var lstCables = this.GetCables();
-            if (lstCables.Count() > 0)
-                return;
+            //var lstCables = this.GetCables();
+            //if (lstCables.Count() > 0)
+            //    return;
 
             var nodes = _dbCtx.Nodes.ToDictionary(n => n.Name);
             var ss = _dbCtx.SegSystems.Where(ss => ss.Name == "LV").First();
