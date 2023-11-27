@@ -43,6 +43,13 @@ namespace DbTest
             Assert.True(_dbFixture.DbContext.Nodes.Count() > 0);
         }
 
+        [Fact, Order(2)]
+        public void AddLoads()
+        {
+            _dbFixture.Repo.AddLoads();
+            Assert.True(_dbFixture.DbContext.Loads.Count() > 0);
+        }
+
         [Fact, Order(3)]
         public void AddCableSpecs()
         {
@@ -73,7 +80,7 @@ namespace DbTest
         [Fact, Order(5)]
         public void AddRoute()
         {
-            _dbFixture.Repo.AddRoute();
+            _dbFixture.Repo.AddRoutes();
             var rt = _dbFixture.Repo.GetRoute();
             Assert.NotNull(rt);
             Assert.True(rt?.Path.Count() > 0);

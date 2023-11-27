@@ -5,9 +5,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ElectricalDbJetLib\ElectricalDbJetLib.csproj" />
     <ProjectReference Include="..\ElectricalDbSqliteLib\ElectricalDbSqliteLib.csproj" />
     <ProjectReference Include="..\ElectricalEntityLib\ElectricalEntityLib.csproj" />
   </ItemGroup>

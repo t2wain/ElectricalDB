@@ -32,6 +32,19 @@ namespace ElectricalDbSqliteLib
             }
         }
 
+        public static ElectricalDbContextBase InitDB(string fileName)
+        {
+            // These options will be used by the context instances in this test suite, including the connection opened above.
+            var contextOptions = new DbContextOptionsBuilder<ElectricalDbContext>()
+                .UseSqlite(String.Format("Data source = {0}", fileName))
+                .Options;
+
+            var dbContext = new ElectricalDbContext(contextOptions);
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
+            return dbContext;
+        }
+
         public static void Cleanup()
         {
             _dbContext.Dispose();

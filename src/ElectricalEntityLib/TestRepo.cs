@@ -1,5 +1,6 @@
 ﻿using ElectricalEntityLib.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ElectricalEntityLib
 {
@@ -63,13 +64,13 @@ namespace ElectricalEntityLib
             var sizes = this.GetConductorSizes()?.Children?.ToDictionary(lk => lk.Value)!;
 
             // cable library headers
-            var necLib1 = new LookUp { Value = "3/C, 600V, Power" };
-            var necLib2 = new LookUp { Value = "1/C, 600V, Grounding" };
-            var necLib3 = new LookUp { Value = "3/C, 5 kV, Power" };
-            var necLib4 = new LookUp { Value = "1/C, 5 kV, Power" };
-            var necLib5 = new LookUp { Value = "1/C, 15 kV, Power" };
-            var necLib6 = new LookUp { Value = "Instrument" };
-            var necLib7 = new LookUp { Value = "Control" };
+            var necLib1 = new LookUp { Value = "3/C, 600V, Power", Value2 = 201 };
+            var necLib2 = new LookUp { Value = "1/C, 600V, Grounding", Value2 = 202 };
+            var necLib3 = new LookUp { Value = "3/C, 5 kV, Power", Value2 = 203 };
+            var necLib4 = new LookUp { Value = "1/C, 5 kV, Power", Value2 = 204 };
+            var necLib5 = new LookUp { Value = "1/C, 15 kV, Power", Value2 = 205 };
+            var necLib6 = new LookUp { Value = "Instrument", Value2 = 206 };
+            var necLib7 = new LookUp { Value = "Control", Value2 = 207 };
 
             var cslib = new LookUp
             {
@@ -356,7 +357,7 @@ namespace ElectricalEntityLib
             _dbCtx.SaveChanges();
         }
 
-        public void AddRoute()
+        public void AddRoutes()
         {
             var cbl = _dbCtx.Cables.Where(c => c.Name == "CABLE1").First();
             var rw = _dbCtx.Raceways.ToDictionary(r => r.Name);
@@ -386,6 +387,41 @@ namespace ElectricalEntityLib
             _dbCtx.CableFills.AddRange(
                 rt.Path.Select(p => new CableFill { Cable = cbl, Raceway = p.Raceway }).ToList());
 
+            _dbCtx.SaveChanges();
+        }
+
+        public void AddLoads()
+        {
+            var lib = new LookUp { Value = "NEC Motors, 3ph, LV, 480V", Value2 = 310 };
+            var lk = new LookUp { Value = "Load Libraries", Value2 = 300, Children = new[] { lib } };
+
+            _dbCtx.AddRange(lk);
+
+            var loads = new List<Load>
+            {
+                new() { Name = "1hp", Size = 1.0, SizeUnit = 0, LoadType = 0, FLA = 2.1, FLAPF = 0.54, LRA = 15.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "1.5hp", Size = 1.5, SizeUnit = 0, LoadType = 0, FLA = 3.0, FLAPF = 0.557, LRA = 20.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "2hp", Size = 2.0, SizeUnit = 0, LoadType = 0, FLA = 3.4, FLAPF = 0.656, LRA = 25.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "3hp", Size = 3.0, SizeUnit = 0, LoadType = 0, FLA = 4.8, LRAPF = 0.669, LRA = 32.0, FLAPF = 0.15, Library = lib },
+                new() { Name = "5hp", Size = 5.0, SizeUnit = 0, LoadType = 0, FLA = 7.6, FLAPF = 0.704, LRA = 46.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "7.5hp", Size = 7.5, SizeUnit = 0, LoadType = 0, FLA = 11.0, FLAPF = 0.713, LRA = 64.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "10hp", Size = 10.0, SizeUnit = 0, LoadType = 0, FLA = 14.0, FLAPF = 0.747, LRA = 81.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "15hp", Size = 15.0, SizeUnit = 0, LoadType = 0, FLA = 21.0, FLAPF = 0.729, LRA = 116.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "20hp", Size = 20.0, SizeUnit = 0, LoadType = 0, FLA = 27.0, FLAPF = 0.756, LRA = 145.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "25hp", Size = 25.0, SizeUnit = 0, LoadType = 0, FLA = 34.0, FLAPF = 0.74, LRA = 183.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "30hp", Size = 30.0, SizeUnit = 0, LoadType = 0, FLA = 40.0, FLAPF = 0.75, LRA = 218.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "40hp", Size = 10.0, SizeUnit = 0, LoadType = 0, FLA = 52.0, FLAPF = 0.769, LRA = 290.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "50hp", Size = 50.0, SizeUnit = 0, LoadType = 0, FLA = 65.0, FLAPF = 0.765, LRA = 363.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "60hp", Size = 60.0, SizeUnit = 0, LoadType = 0, FLA = 77.0, FLAPF = 0.772, LRA = 435.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "75hp", Size = 75.0, SizeUnit = 0, LoadType = 0, FLA = 96.0, FLAPF = 0.774, LRA = 543.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "100hp", Size = 100.0, SizeUnit = 0, LoadType = 0, FLA = 124.0, FLAPF = 0.795, LRA = 725.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "125hp", Size = 125.0, SizeUnit = 0, LoadType = 0, FLA = 156.0, FLAPF = 0.785, LRA = 908.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "150hp", Size = 150.0, SizeUnit = 0, LoadType = 0, FLA = 180.0, FLAPF = 0.818, LRA = 1085.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "200hp", Size = 200.0, SizeUnit = 0, LoadType = 0, FLA = 240.0, FLAPF = 0.809, LRA = 1450.0, LRAPF = 0.15, Library = lib },
+                new() { Name = "250hp", Size = 250.0, SizeUnit = 0, LoadType = 0, FLA = 302.0, FLAPF = 0.825, LRA = 1825.0, LRAPF = 0.15, Library = lib },
+            };
+
+            _dbCtx.AddRange(loads);
             _dbCtx.SaveChanges();
         }
 

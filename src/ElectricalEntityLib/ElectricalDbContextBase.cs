@@ -12,6 +12,7 @@ namespace ElectricalEntityLib
         public DbSet<Cable> Cables { get; set; }
         public DbSet<CableFill> CableFills { get; set; }
         public DbSet<CableSpec> CableSpecs { get; set; }
+        public DbSet<Load> Loads { get; set; }
         public DbSet<LookUp> LookUps { get; set; }
         public DbSet<Node> Nodes { get; set; }
         public DbSet<Raceway> Raceways { get; set; }
