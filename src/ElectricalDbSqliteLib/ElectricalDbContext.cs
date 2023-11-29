@@ -4,11 +4,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ElectricalDbSqliteLib
 {
+    /// <summary>
+    /// Subclass inherting from a common DbContext base class
+    /// </summary>
     public class ElectricalDbContext : ElectricalDbContextBase
     {
         static SqliteConnection _connection = null;
         static ElectricalDbContext _dbContext = null;
 
+        /// <summary>
+        /// Configure DbContext to use Sqlite in-memory data provider. 
+        /// This data provider is used in the unit test project. 
+        /// </summary>
         public static ElectricalDbContext MemoryDbContext
         {
             get
@@ -32,16 +39,27 @@ namespace ElectricalDbSqliteLib
             }
         }
 
+        /// <summary>
+        /// Configure the DbContext using the Sqlite data provider.
+        /// Note, this implementation will delete the existing the data file.
+        /// Only use this method during testing.
+        /// </summary>
+        /// <param name="fileName">Sqlite data file</param>
+        /// <returns></returns>
         public static ElectricalDbContextBase InitDB(string fileName)
         {
-            // These options will be used by the context instances in this test suite, including the connection opened above.
             var contextOptions = new DbContextOptionsBuilder<ElectricalDbContext>()
                 .UseSqlite(String.Format("Data source = {0}", fileName))
                 .Options;
 
             var dbContext = new ElectricalDbContext(contextOptions);
+
+            // WARNING: Will delete the existing data file
             dbContext.Database.EnsureDeleted();
+
+            // Only create the relational objects if the database is empty.
             dbContext.Database.EnsureCreated();
+
             return dbContext;
         }
 
@@ -51,6 +69,10 @@ namespace ElectricalDbSqliteLib
             _connection.Dispose();
         }
 
+        /// <summary>
+        /// Using a generic version of DbContextOptions
+        /// </summary>
+        /// <param name="options">Generic version of DbContextOptions</param>
         public ElectricalDbContext(DbContextOptions<ElectricalDbContext> options) : base(options) { }
 
     }

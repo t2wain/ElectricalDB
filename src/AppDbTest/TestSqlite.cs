@@ -15,6 +15,7 @@ namespace AppDbTest
 
         public static void TestMemoryDB()
         {
+            // using Sqlite in-memory data provider
             using var db = LT.ElectricalDbContext.MemoryDbContext;
             var repo = new TestRepo(db);
 
@@ -40,16 +41,19 @@ namespace AppDbTest
 
         public static void InitSqliteDB()
         {
+            // using Sqlite data provider
             var db = LT.ElectricalDbContext.InitDB("C:\\dev\\electricaldb.db");
             AddData(db);
         }
 
         public static void InitJetDB()
         {
+            // using JET data provider for Microsoft Access data file
             var db = JT.ElectricalDbContextJet.InitDB("C:\\dev\\electricaldb.accdb");
             AddData(db);
         }
 
+        // testing the inserts and queries using DbContext
         protected static void AddData(ElectricalDbContextBase db)
         {
             var repo = new TestRepo(db);

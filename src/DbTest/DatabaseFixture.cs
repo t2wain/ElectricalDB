@@ -10,6 +10,7 @@ namespace DbTest
 
         public DatabaseFixture()
         {
+            // using sql in-memory data provider
             _dbCtx = ElectricalDbContext.MemoryDbContext;
             _repo = new TestRepo(_dbCtx);
         }

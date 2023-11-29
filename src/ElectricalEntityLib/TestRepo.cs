@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ElectricalEntityLib
 {
+    /// <summary>
+    /// Allow the testing of inserts and queries using the DbContext during design phase.
+    /// </summary>
     public class TestRepo
     {
         public const string CZ1_0 = "1/0awg";
@@ -15,6 +18,11 @@ namespace ElectricalEntityLib
 
         ElectricalDbContextBase _dbCtx = null;
 
+        /// <summary>
+        /// Accepting a base class DbContext. The specific implementation will
+        /// specify its data provider.
+        /// </summary>
+        /// <param name="dbCtx">DbContext base class</param>
         public TestRepo(ElectricalDbContextBase dbCtx)
         {
             _dbCtx = dbCtx;
